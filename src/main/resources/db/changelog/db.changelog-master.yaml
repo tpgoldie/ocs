@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - preConditions:
+    - runningAs:
+        username: sa
+#    - includeAll:
+#        path: db/changelog/
+
+  - changeSet:
+      id: 1.0
+      author: tpg
+      changes:
+        - createTable:
+            schemaName: ocs
+            tableName: customers
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: first_name
+                  type: varchar(40)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: surname
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: account_number
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+
+              - createSequence:
+                  catalogName: ocs
+                  cycle: true
+                  incrementBy: 1
+                  minValue: 1000
+                  ordered: true
+                  schemaName: ocs
+                  sequenceName: seq_customers
+                  startValue: 5
