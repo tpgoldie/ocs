@@ -9,13 +9,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ClientsConfig {
-
-    @Autowired
-    private RestTemplateBuilder restTemplateBuilder;
+    @Bean
+    public RestTemplateBuilder restTemplateBuilder() {
+        return new RestTemplateBuilder();
+    }
 
     @Bean
     public UserAuthenticationServiceClient userAuthenticationServiceClient() {
 
-        return new UserAuthenticationServiceClientImpl(restTemplateBuilder);
+        return new UserAuthenticationServiceClientImpl(restTemplateBuilder());
     }
 }

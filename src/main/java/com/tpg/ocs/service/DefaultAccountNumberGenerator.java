@@ -9,6 +9,6 @@ public class DefaultAccountNumberGenerator implements AccountNumberGeneration {
     @Override
     public String generateAccountNumber() {
 
-        return RandomStringUtils.random(10);
+        return RandomStringUtils.randomAlphanumeric(10).toUpperCase();
     }
 }

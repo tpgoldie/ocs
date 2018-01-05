@@ -1,13 +1,13 @@
 package com.tpg.ocs.service;
 
-import com.tpg.ocs.domain.Customer;
+import com.tpg.ocs.domain.NewCustomer;
 import lombok.Getter;
 
 import java.util.Optional;
 
 public interface CustomerLifecycleService {
 
-    Optional<Outcome> save(Customer customer);
+    Optional<Outcome> save(NewCustomer customer);
 
     @Getter
     public abstract class Outcome {

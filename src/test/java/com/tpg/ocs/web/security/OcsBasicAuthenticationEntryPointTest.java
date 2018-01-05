@@ -15,7 +15,10 @@ import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Enumeration;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -47,13 +50,27 @@ public class OcsBasicAuthenticationEntryPointTest {
     public void commence() throws Exception {
         StubPrintWriter printWriter = new StubPrintWriter(new BufferedWriter(new StringWriter()));
 
+        Enumeration<String> names = new Enumeration<String>() {
+            @Override
+            public boolean hasMoreElements() {
+                return false;
+            }
+
+            @Override
+            public String nextElement() {
+                return null;
+            }
+        };
+
+        when(request.getHeaderNames()).thenReturn(names);
+
         when(response.getWriter()).thenReturn(printWriter);
 
         entryPoint.afterPropertiesSet();
 
         entryPoint.commence(request, response, authenticationException);
 
-        verify(response).addHeader("WWW-Authenticate", "Basic realm=Shop");
+        verify(response).addHeader("WWW-Authenticate", "Basic realm=OCS");
 
         verify(response).setStatus(SC_UNAUTHORIZED);
 

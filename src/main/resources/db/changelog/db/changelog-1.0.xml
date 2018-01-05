@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="tgolding" id="1.0" dbms="postgresql">
+        <!--<sql endDelimiter=";">-->
+            <!--CREATE SCHEMA ocs-->
+        <!--</sql>-->
+        <createTable schemaName="ocs" tableName="customers">
+            <column name="id" type="int" value="customers_seq.nextval">
+                <constraints nullable="false" primaryKey="true" unique="true" />
+            </column>
+            <column name="first_name" type="varchar(40)">
+                <constraints nullable="false" unique="false" />
+            </column>
+            <column name="surname" type="varchar(50)">
+                <constraints nullable="false" unique="false" />
+            </column>
+            <column name="account_number" type="char(10)">
+                <constraints nullable="false" unique="true" />
+            </column>
+            <column name="opened_date" type="date">
+                <constraints nullable="false" />
+            </column>
+            <column name="closed_date" type="date">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <createSequence schemaName="ocs"
+                        sequenceName="customers_seq"
+                        startValue="100" />
+    </changeSet>
+</databaseChangeLog>

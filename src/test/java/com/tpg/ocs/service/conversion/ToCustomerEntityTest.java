@@ -1,19 +1,19 @@
 package com.tpg.ocs.service.conversion;
 
-import com.tpg.ocs.domain.Customer;
-import com.tpg.ocs.domain.CustomerDomainFixture;
+import com.tpg.ocs.domain.NewCustomer;
+import com.tpg.ocs.domain.NewCustomerDomainFixture;
 import com.tpg.ocs.persistence.entities.CustomerEntity;
 import com.tpg.ocs.persistence.entities.PersistentName;
 import org.junit.Test;
 
 import static com.tpg.ocs.persistence.entities.CustomerEntityAssertion.assertThat;
 
-public class ToCustomerEntityTest implements CustomerDomainFixture, ToCustomerEntity {
+public class ToCustomerEntityTest implements NewCustomerDomainFixture, ToCustomerEntity {
 
     @Test
     public void convertCustomerToEntity() {
 
-        Customer customer = johnDoe();
+        NewCustomer customer = newCustomerJohnDoe();
 
         CustomerEntity actual = convert(customer);
 

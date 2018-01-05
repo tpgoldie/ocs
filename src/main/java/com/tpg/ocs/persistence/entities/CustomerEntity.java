@@ -15,12 +15,19 @@ public class CustomerEntity extends PersistenceEntity {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name="firstName",
-                    column=@Column(name="first_name")),
-            @AttributeOverride(name="surname",
-                    column=@Column(name="surname"))
+        @AttributeOverride(name="firstName",
+            column=@Column(name="first_name")),
+        @AttributeOverride(name="surname",
+            column=@Column(name="surname"))
     })
     private PersistentName name;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name="username",
+            column=@Column(name="user_name"))
+    })
+    private PersistentUser user;
 
     @Column(name = "account_number")
     private String accountNumber;

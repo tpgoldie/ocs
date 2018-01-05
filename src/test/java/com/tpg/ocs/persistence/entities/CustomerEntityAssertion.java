@@ -24,6 +24,13 @@ public class CustomerEntityAssertion extends AbstractAssert<CustomerEntityAssert
         return this;
     }
 
+    public CustomerEntityAssertion hasUser(PersistentUser value) {
+
+        assertTrue("User does not match", actual.getUser().equals(value));
+
+        return this;
+    }
+
     public CustomerEntityAssertion hasAccountNumber(String value) {
 
         assertTrue("Account number does not match", actual.getAccountNumber().equals(value));

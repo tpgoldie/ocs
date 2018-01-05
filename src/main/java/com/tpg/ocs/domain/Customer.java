@@ -1,14 +1,19 @@
 package com.tpg.ocs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-@EqualsAndHashCode
-public class Customer {
+import javax.xml.bind.annotation.XmlRootElement;
+
+@Data
+@JsonIgnoreProperties(ignoreUnknown = true)
+public abstract class Customer {
+
     @JsonProperty
     private String firstName;
 
@@ -17,6 +22,10 @@ public class Customer {
 
     @JsonProperty
     private String accountNumber;
+
+    public void setAccountNumber(String value) {
+        accountNumber = value.toUpperCase();
+    }
 
     @Override
     public String toString() {

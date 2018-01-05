@@ -1,0 +1,1 @@
+{"firstName":"John","surname":"Doe","accountNumber":"ABC123","ocsUser":{"username":"jdoe","password":"ABC-213","authorities":[{"authority":"STANDARD_CUSTOMER"}]},"password":"ABC-213","username":"jdoe","ocsAnonymousUsername":"ocs_anon_user","ocsAnonymousPassword":"ocs_new_customer"}

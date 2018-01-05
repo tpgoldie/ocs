@@ -2,13 +2,10 @@ package com.tpg.ocs.context;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
@@ -16,20 +13,27 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@EnableConfigurationProperties(OcsDatabaseProperties.class)
 public class PersistenceConfig {
 
     @Autowired
-    private Environment environment;
+    private OcsDatabaseProperties ocsDatabaseProperties;
 
-    @Bean
-    public DataSource dataSource() {
-
-        BasicDataSource dataSource = new BasicDataSource();
-
-        dataSource.setDriverClassName(environment.getRequiredProperty("db.driver"));
-
-        return dataSource;
-    }
+//    @Bean
+//    public DataSource dataSource() {
+//
+//        BasicDataSource dataSource = new BasicDataSource();
+//
+//        dataSource.setDriverClassName(ocsDatabaseProperties.getDriver());
+//
+//        dataSource.setUrl(ocsDatabaseProperties.getUrl());
+//
+//        dataSource.setUsername(ocsDatabaseProperties.getUsername());
+//
+//        dataSource.setPassword(ocsDatabaseProperties.getPassword());
+//
+//        return dataSource;
+//    }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Environment env) {

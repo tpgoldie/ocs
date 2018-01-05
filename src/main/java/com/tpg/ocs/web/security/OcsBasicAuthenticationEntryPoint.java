@@ -1,5 +1,6 @@
 package com.tpg.ocs.web.security;
 
+import com.tpg.ocs.context.WebSecurityConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
@@ -11,6 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 @Component
 public class OcsBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
@@ -20,12 +24,26 @@ public class OcsBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPo
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authEx)
             throws IOException, ServletException {
+
         response.addHeader("WWW-Authenticate", String.format("Basic realm=%s", getRealmName()));
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+        Enumeration<String> names = request.getHeaderNames();
+        while (names.hasMoreElements()) {
+
+            String key = names.nextElement();
+
+            String value = request.getHeader(key);
+
+            LOGGER.debug("Http header - {} = {}", key, value);
+
+            response.addHeader(key, value);
+        }
+
+        response.setStatus(SC_UNAUTHORIZED);
 
         PrintWriter writer = response.getWriter();
 
-        String msg = String.format("HTTP Status %d - %s", HttpServletResponse.SC_UNAUTHORIZED, authEx.getMessage());
+        String msg = String.format("HTTP Status %d - %s", SC_UNAUTHORIZED, authEx.getMessage());
 
         LOGGER.info(msg);
 
@@ -34,7 +52,9 @@ public class OcsBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPo
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        setRealmName("Shop");
+
+        setRealmName(WebSecurityConfig.REALM_NAME);
+
         super.afterPropertiesSet();
     }
 }

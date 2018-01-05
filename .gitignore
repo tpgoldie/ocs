@@ -1,23 +1,23 @@
 target/
-!.mvn/wrapper/maven-wrapper.jar
+.mvn/
+*.tlog
+
+data/
+
+Servers/
+
+databasechangelog.csv
 
 ### STS ###
-.apt_generated
 .classpath
-.factorypath
 .project
 .settings
-.springBeans
 
 ### IntelliJ IDEA ###
 .idea
 *.iml
-*.ipr
+RemoteSystemsTempFiles
 
-### NetBeans ###
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
+transaction-logs
+
+/.metadata/

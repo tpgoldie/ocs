@@ -1,7 +1,8 @@
 package integration.com.tpg.ocs.service;
 
-import com.tpg.ocs.domain.Customer;
-import com.tpg.ocs.domain.CustomerDomainFixture;
+import com.tpg.ocs.client.UserAuthenticationServiceClient;
+import com.tpg.ocs.domain.NewCustomer;
+import com.tpg.ocs.domain.NewCustomerDomainFixture;
 import com.tpg.ocs.persistence.repositories.CustomerLifecycleRepository;
 import com.tpg.ocs.service.AccountNumberGeneration;
 import com.tpg.ocs.service.CustomerLifecycleService;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-public class SaveNewCustomerTest implements CustomerDomainFixture {
+public class SaveNewCustomerTest implements NewCustomerDomainFixture {
 
     @TestConfiguration
     static class TestConfig {
@@ -30,10 +31,14 @@ public class SaveNewCustomerTest implements CustomerDomainFixture {
         @MockBean
         private CustomerLifecycleRepository customerLifecycleRepository;
 
+        @Autowired
+        private UserAuthenticationServiceClient userAuthenticationServiceClient;
+
         @Bean
         public CustomerLifecycleService customerLifecycleService() {
 
-            return new CustomerLifecycleServiceImpl(customerLifecycleRepository, accountNumberGeneration);
+            return new CustomerLifecycleServiceImpl(userAuthenticationServiceClient, customerLifecycleRepository,
+                accountNumberGeneration);
         }
     }
 
@@ -49,7 +54,7 @@ public class SaveNewCustomerTest implements CustomerDomainFixture {
     @Test
     public void saveNewCustomer_newCustomer_shouldSaveNewCustomer() {
 
-        Customer customer = johnDoe();
+        NewCustomer customer = newCustomerJohnDoe();
 
         whenSavingNewCustomer(customer);
 
@@ -58,7 +63,7 @@ public class SaveNewCustomerTest implements CustomerDomainFixture {
         verify(accountNumberGeneration).generateAccountNumber();
     }
 
-    private void whenSavingNewCustomer(Customer customer) {
+    private void whenSavingNewCustomer(NewCustomer customer) {
 
         when(accountNumberGeneration.generateAccountNumber()).thenReturn(generateId());
 

@@ -1,0 +1,35 @@
+application:
+  name: ocs
+
+spring.thymeleaf.cache: false
+
+debug: true
+
+spring:
+  datasource:
+    username: ocs_user
+    password: ocs_ocs
+    url: jdbc:postgresql://localhost/ocs
+    driver: org.postgresql.Driver
+  session:
+    store-type: none
+
+jdbc:
+  url: jdbc:postgresql://localhost/ocs
+  username: tpg
+  password: to3pa5go7
+  driver: org.postgresql.Driver
+
+activti:
+  jdbc:
+    url: jdbc:postgresql://localhost/ocs
+    username: activiti
+    password: activiti
+    driver: org.postgresql.Driver
+    defaultAutoCommit: false
+
+liquibase:
+  changeLog: classpath:/db/changelog/db/changelog-master.xml
+
+hibernate:
+  id.new_generator_mappings: true

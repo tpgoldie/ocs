@@ -2,9 +2,11 @@ package com.tpg.ocs.client;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
@@ -21,6 +23,7 @@ public class UserAuthentication implements UserDetails {
     private String password;
 
     @JsonProperty
+    @JsonDeserialize(contentUsing = GrantedAuthorityDeserializer.class)
     private List<GrantedAuthority> authorities;
 
     @JsonProperty

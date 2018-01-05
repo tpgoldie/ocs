@@ -1,15 +1,12 @@
 package com.tpg.ocs;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.support.SpringBootServletInitializer;
 
-@SpringBootApplication
-public class OcsWebApplication extends SpringBootServletInitializer {
+@SpringBootApplication(scanBasePackages = "com.tpg.ocs")
+public class OcsWebApplication {
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(OcsWebApplication.class);
+	public static void main(String[] args) {
+		SpringApplication.run(OcsWebApplication.class, args);
 	}
-
 }
