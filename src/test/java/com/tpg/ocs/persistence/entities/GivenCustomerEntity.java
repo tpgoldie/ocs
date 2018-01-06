@@ -8,7 +8,8 @@ public interface GivenCustomerEntity extends UniqueIdGeneration, DateGeneration,
 
     default CustomerEntity givenCustomer() {
 
-        CustomerEntity customer = newCustomer("John", "Doe", generateDate(12, 3, 1975), generateId());
+        CustomerEntity customer = newCustomer("John", "Doe", generateDate(12, 3, 1975),
+                generateId(), "jdoe", "ABC-123");
 
         TestEntityManager entityManager = getEntityManager();
 

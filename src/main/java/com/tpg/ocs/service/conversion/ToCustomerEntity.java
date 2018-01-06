@@ -21,9 +21,13 @@ public interface ToCustomerEntity extends ToEntity<NewCustomer, CustomerEntity> 
 
         entity.setName(name);
 
+        entity.setDateOfBirth(source.getDateOfBirth());
+
         PersistentUser user = new PersistentUser();
         user.setUsername(source.getOcsUser().getUsername());
         user.setPassword(source.getOcsUser().getPassword());
+
+        entity.setDateOpened(source.getDateOfBirth());
 
         List<UserRole> userRoles = source.getOcsUser().getAuthorities()
                 .stream().map(auth -> matchUserRole(auth.getAuthority()))

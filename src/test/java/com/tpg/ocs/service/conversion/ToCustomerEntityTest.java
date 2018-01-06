@@ -24,6 +24,7 @@ public class ToCustomerEntityTest implements NewCustomerDomainFixture, ToCustome
 
         assertThat(actual)
                 .hasName(name)
+                .hasDateOfBirth(customer.getDateOfBirth())
                 .hasAccountNumber(customer.getAccountNumber());
     }
 }

@@ -1,72 +1,99 @@
 package integration.com.tpg.ocs.service;
 
-import com.tpg.ocs.client.UserAuthenticationServiceClient;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.tpg.ocs.OcsWebApplication;
+import com.tpg.ocs.client.UserAuthentication;
+import com.tpg.ocs.client.UsernameAndPassword;
+import com.tpg.ocs.context.RepositoriesConfig;
 import com.tpg.ocs.domain.NewCustomer;
 import com.tpg.ocs.domain.NewCustomerDomainFixture;
-import com.tpg.ocs.persistence.repositories.CustomerLifecycleRepository;
-import com.tpg.ocs.service.AccountNumberGeneration;
+import com.tpg.ocs.domain.OcsUser;
+import com.tpg.ocs.domain.OcsUserDomainFixture;
 import com.tpg.ocs.service.CustomerLifecycleService;
-import com.tpg.ocs.service.CustomerLifecycleServiceImpl;
+import com.tpg.ocs.web.controllers.UserAuthenticationFixture;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.tpg.ocs.persistence.repositories.CustomerLifecycleRepositoryAssertion.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static com.tpg.ocs.domain.UserRole.STANDARD_CUSTOMER_ROLE;
+import static java.lang.String.format;
+import static java.util.Collections.singletonList;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @RunWith(SpringRunner.class)
-public class SaveNewCustomerTest implements NewCustomerDomainFixture {
-
-    @TestConfiguration
-    static class TestConfig {
-
-        @MockBean
-        private AccountNumberGeneration accountNumberGeneration;
-
-        @MockBean
-        private CustomerLifecycleRepository customerLifecycleRepository;
-
-        @Autowired
-        private UserAuthenticationServiceClient userAuthenticationServiceClient;
-
-        @Bean
-        public CustomerLifecycleService customerLifecycleService() {
-
-            return new CustomerLifecycleServiceImpl(userAuthenticationServiceClient, customerLifecycleRepository,
-                accountNumberGeneration);
-        }
-    }
+@SpringBootTest(classes = {OcsWebApplication.class, RepositoriesConfig.class}, webEnvironment = RANDOM_PORT)
+public class SaveNewCustomerTest implements NewCustomerDomainFixture, UserAuthenticationFixture, OcsUserDomainFixture {
 
     @Autowired
-    private CustomerLifecycleRepository customerLifecycleRepository;
-
-    @Autowired
-    private AccountNumberGeneration accountNumberGeneration;
+    private ObjectMapper objectMapper;
 
     @Autowired
     private CustomerLifecycleService customerLifecycleService;
 
-    @Test
-    public void saveNewCustomer_newCustomer_shouldSaveNewCustomer() {
+    private UserAuthentication userAuthentication;
 
-        NewCustomer customer = newCustomerJohnDoe();
+    @Rule
+    public WireMockRule userAuthenticationService = new WireMockRule(options().port(8181));
 
-        whenSavingNewCustomer(customer);
+    @Before
+    public void setUp() {
 
-        assertThat(customerLifecycleRepository).savesNewCustomer(customer);
-
-        verify(accountNumberGeneration).generateAccountNumber();
+        userAuthentication = ocsAnonymousUserNewCustomerUserAuthentication();
     }
 
-    private void whenSavingNewCustomer(NewCustomer customer) {
+    @Test
+    public void saveNewCustomer_newCustomer_shouldSaveNewCustomer() throws JsonProcessingException {
 
-        when(accountNumberGeneration.generateAccountNumber()).thenReturn(generateId());
+        String id = generateId();
+
+        NewCustomer customer = newCustomer(format("%s-first-name", id), format("%s-surname", id),
+                "", id, generateId(), generateDate(14, 7, 1976));
+
+        stubUserAuthenticationCheck();
+
+        stubNewUserCreation(customer);
 
         customerLifecycleService.save(customer);
     }
+
+    private String stubUserAuthenticationCheck() throws JsonProcessingException {
+        String userAuthenticationJson = objectMapper.writeValueAsString(userAuthentication);
+
+        String userAuthenticationUrl = format("/ocs/users/%s", userAuthentication.getUsername());
+
+        stubFor(WireMock.post(userAuthenticationUrl)
+                .willReturn(okJson(userAuthenticationJson)));
+
+        return userAuthenticationUrl;
+    }
+
+    private String stubNewUserCreation(NewCustomer customer) throws JsonProcessingException {
+
+        String newUserUrl = "/ocs/users";
+
+        UsernameAndPassword userDetails = new UsernameAndPassword(customer.getUsername(), customer.getPassword());
+
+        String usernameAndPasswordJson = objectMapper.writeValueAsString(userDetails);
+
+        OcsUser ocsUser = anOcsUser(customer.getOcsUser().getUsername(),
+                customer.getOcsUser().getPassword(), singletonList(STANDARD_CUSTOMER_ROLE));
+
+        String newUserJson = objectMapper.writeValueAsString(ocsUser);
+
+        stubFor(WireMock.post(newUserUrl)
+                .withRequestBody(equalTo(usernameAndPasswordJson))
+                .willReturn(okJson(newUserJson)));
+
+        return newUserUrl;
+    }
+
 }

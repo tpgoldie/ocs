@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.time.LocalDate;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -19,6 +20,9 @@ public abstract class Customer {
 
     @JsonProperty
     private String surname;
+
+    @JsonProperty
+    private LocalDate dateOfBirth;
 
     @JsonProperty
     private String accountNumber;
