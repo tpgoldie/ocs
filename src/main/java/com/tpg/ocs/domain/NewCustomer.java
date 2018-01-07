@@ -7,12 +7,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class NewCustomer extends Customer implements OcsAnonymousUser {
 
     @JsonProperty
+    @Valid
     private OcsUser ocsUser = new OcsUser();
 
     @JsonIgnore

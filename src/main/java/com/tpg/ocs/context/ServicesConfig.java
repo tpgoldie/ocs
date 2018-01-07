@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.validation.Validator;
 
 @Configuration
 @Import({RepositoriesConfig.class})
@@ -23,9 +24,12 @@ public class ServicesConfig implements ObjectMapping {
     @Autowired
     private AccountNumberGeneration accountNumberGeneration;
 
+    @Autowired
+    private Validator validator;
+
     @Bean
     public CustomerLifecycleService customerLifecycleService() {
 
-        return new CustomerLifecycleServiceImpl(userAuthenticationServiceClient, customerLifecycleRepository, accountNumberGeneration);
+        return new CustomerLifecycleServiceImpl(userAuthenticationServiceClient, customerLifecycleRepository, accountNumberGeneration, validator);
     }
 }

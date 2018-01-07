@@ -6,6 +6,8 @@ import com.tpg.ocs.persistence.entities.CustomerEntity;
 import com.tpg.ocs.persistence.entities.PersistentName;
 import org.mockito.ArgumentCaptor;
 
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class CustomerLifecycleRepositoryAssertion {
@@ -37,6 +39,13 @@ public class CustomerLifecycleRepositoryAssertion {
         CustomerEntityAssertion.assertThat(actual)
                 .hasName(name)
                 .hasAccountNumber(customer.getAccountNumber());
+
+        return this;
+    }
+
+    public CustomerLifecycleRepositoryAssertion doesNotSaveNewCustomer() {
+
+        verify(customerLifecycleRepository, never()).save(isA(CustomerEntity.class));
 
         return this;
     }

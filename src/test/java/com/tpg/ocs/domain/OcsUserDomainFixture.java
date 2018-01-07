@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface OcsUserDomainFixture {
+
     default OcsUser anOcsUser(String username, String password, List<UserRole> userRoles) {
 
         List<GrantedAuthority> authorities = userRoles.stream().map(ur -> new SimpleGrantedAuthority(ur.getLabel())).collect(Collectors.toList());

@@ -12,7 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+import org.springframework.validation.MapBindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Optional;
 
 @Service
@@ -23,32 +29,51 @@ public class CustomerLifecycleServiceImpl implements CustomerLifecycleService, T
     private final UserAuthenticationServiceClient userAuthenticationServiceClient;
     private CustomerLifecycleRepository customerLifecycleRepository;
     private AccountNumberGeneration accountNumberGeneration;
+    private final Validator validator;
 
     @Autowired
     public CustomerLifecycleServiceImpl(UserAuthenticationServiceClient userAuthenticationServiceClient,
                                         CustomerLifecycleRepository customerLifecycleRepository,
-                                        AccountNumberGeneration accountNumberGeneration) {
+                                        AccountNumberGeneration accountNumberGeneration,
+                                        Validator validator) {
 
         this.userAuthenticationServiceClient = userAuthenticationServiceClient;
         this.customerLifecycleRepository = customerLifecycleRepository;
         this.accountNumberGeneration = accountNumberGeneration;
+        this.validator = validator;
     }
 
     @Override
 //    @PreAuthorize("hasRole('ROLE_NEW_CUSTOMER')")
     public Optional<Outcome> save(NewCustomer customer) {
+        Errors errors = new MapBindingResult(new HashMap<>(), "newCustomer");
+
+        validator.validate(customer, errors);
+
+        if (errors.getErrorCount() > 0) {
+
+            LOGGER.error("Customer validation failed {}", errors.getAllErrors());
+
+            return Optional.empty();
+        }
+
         Optional<OcsUser> user = userAuthenticationServiceClient.createUser(customer.getOcsUser().getUsername(),
                 customer.getOcsUser().getPassword());
 
         String newAccountNo = accountNumberGeneration.generateAccountNumber();
 
-        customer.setOcsUser(user.get());
+        return user.flatMap(u -> save(customer, u, newAccountNo));
+    }
 
-        customer.setAccountNumber(newAccountNo);
+    private Optional<Outcome> save(NewCustomer newCustomer, OcsUser user, String newAccountNo) {
+
+        newCustomer.setOcsUser(user);
+
+        newCustomer.setAccountNumber(newAccountNo);
 
         LOGGER.info("Generated new account number ...");
 
-        CustomerEntity customerEntity = convert(customer);
+        CustomerEntity customerEntity = convert(newCustomer);
 
         customerLifecycleRepository.save(customerEntity);
 

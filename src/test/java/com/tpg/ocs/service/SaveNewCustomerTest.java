@@ -2,7 +2,6 @@ package com.tpg.ocs.service;
 
 import com.tpg.ocs.domain.NewCustomer;
 import com.tpg.ocs.persistence.entities.CustomerEntity;
-import com.tpg.ocs.persistence.repositories.AccountNumberGenerationAssertion;
 import com.tpg.ocs.service.CustomerLifecycleService.NewAccountNumber;
 import com.tpg.ocs.service.CustomerLifecycleService.Outcome;
 import org.junit.Test;
@@ -26,7 +25,7 @@ public class SaveNewCustomerTest extends CustomerLifecycleServiceImplTest {
         assertTrue(actual.isPresent());
 
         NewAccountNumberAssertion.assertThat((NewAccountNumber) actual.get())
-                .hasAccountNumber(customer.getAccountNumber());
+            .hasAccountNumber(customer.getAccountNumber());
 
         AccountNumberGenerationAssertion.assertThat(accountNumberGeneration).accountNumberGenerated();
 

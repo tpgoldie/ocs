@@ -1,7 +1,6 @@
-package com.tpg.ocs.persistence.repositories;
+package com.tpg.ocs.service;
 
-import com.tpg.ocs.service.AccountNumberGeneration;
-
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class AccountNumberGenerationAssertion {
@@ -21,6 +20,13 @@ public class AccountNumberGenerationAssertion {
     public AccountNumberGenerationAssertion accountNumberGenerated() {
 
         verify(accountNumberGeneration).generateAccountNumber();
+
+        return this;
+    }
+
+    public AccountNumberGenerationAssertion accountNumberNotGenerated() {
+
+        verify(accountNumberGeneration, never()).generateAccountNumber();
 
         return this;
     }

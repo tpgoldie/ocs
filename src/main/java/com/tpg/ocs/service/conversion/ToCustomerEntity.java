@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.tpg.ocs.domain.UserRole.matchUserRole;
+import static java.util.stream.Collectors.toList;
 
 public interface ToCustomerEntity extends ToEntity<NewCustomer, CustomerEntity> {
     default CustomerEntity convert(NewCustomer source) {
@@ -33,7 +34,7 @@ public interface ToCustomerEntity extends ToEntity<NewCustomer, CustomerEntity> 
                 .stream().map(auth -> matchUserRole(auth.getAuthority()))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .collect(Collectors.toList());
+                    .collect(toList());
 
         user.setUserRoles(userRoles);
 
